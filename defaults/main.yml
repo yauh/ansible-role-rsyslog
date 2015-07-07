@@ -1,0 +1,5 @@
+---
+# defaults file for yauh.rsyslog
+rsyslog_port: 20514
+rsyslog_options: '-x'
+logstash_forwarder: false

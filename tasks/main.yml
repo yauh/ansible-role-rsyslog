@@ -1,0 +1,44 @@
+---
+# tasks file for yauh.rsyslog
+- name: Install rsyslog software
+  apt: pkg={{ item }} state=latest update_cache=yes cache_valid_time=3600
+  with_items:
+      - rsyslog
+      - librelp-dev
+      - rsyslog-relp
+
+- name: Create rsyslog.conf configuration file
+  template: >
+    src=rsyslog.conf.j2
+    dest=/etc/rsyslog.conf
+    owner=root
+    group=root
+    mode=0644
+
+- name: Create rsyslog.d configuration directory
+  file: >
+    path=/etc/rsyslog.d
+    owner=root
+    group=root
+    mode=0755
+    state=directory
+
+- name: Create rsyslog default configuration file
+  template: >
+    src=50-default-rsyslog.conf.j2
+    dest=/etc/rsyslog.d/50-default.conf
+    owner=root
+    group=root
+    mode=0644
+
+- name: Configure rsyslogd options
+  lineinfile:
+    dest=/etc/default/rsyslog
+    state=present
+    regexp='^RSYSLOGD_OPTIONS='
+    line='RSYSLOGD_OPTIONS={{ rsyslog_options }}'
+  sudo: yes
+  notify: restart rsyslog
+
+- name: Ensure rsyslog service is started and enabled on boot
+  service: name=rsyslog state=started enabled=yes
