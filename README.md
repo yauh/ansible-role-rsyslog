@@ -1,5 +1,5 @@
 # yauh.rsyslog
-Ansible role to set up rsyslog client and server
+Ansible role for setting up rsyslog
 
 **Work in progress**
 
