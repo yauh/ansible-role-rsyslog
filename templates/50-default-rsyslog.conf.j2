@@ -1,31 +1,69 @@
 # {{ ansible_managed }}
-module(load="imuxsock")             # for listening to /dev/log
-#module(load="omelasticsearch") # for outputting to Elasticsearch
-# this is for index names to be like: logstash-YYYY.MM.DD
-template(name="logstash-index"
-  type="list") {
-    constant(value="logstash-")
-    property(name="timereported" dateFormat="rfc3339" position.from="1" position.to="4")
-    constant(value=".")
-    property(name="timereported" dateFormat="rfc3339" position.from="6" position.to="7")
-    constant(value=".")
-    property(name="timereported" dateFormat="rfc3339" position.from="9" position.to="10")
-}
+#  Default rules for rsyslog.
+#
+#			For more information see rsyslog.conf(5) and /etc/rsyslog.conf
 
-# this is for formatting our syslog in JSON with @timestamp
-template(name="plain-syslog"
-  type="list") {
-    constant(value="{")
-      constant(value="\"@timestamp\":\"")     property(name="timereported" dateFormat="rfc3339")
-      constant(value="\",\"host\":\"")        property(name="hostname")
-      constant(value="\",\"severity\":\"")    property(name="syslogseverity-text")
-      constant(value="\",\"facility\":\"")    property(name="syslogfacility-text")
-      constant(value="\",\"tag\":\"")   property(name="syslogtag" format="json")
-      constant(value="\",\"message\":\"")    property(name="msg" format="json")
-    constant(value="\"}")
-}
-# this is where we actually send the logs to Elasticsearch (localhost:9200 by default)
-#action(type="omelasticsearch"
-#    template="plain-syslog"
-#    searchIndex="logstash-index"
-#    dynSearchIndex="on")
+#
+# First some standard log files.  Log by facility.
+#
+auth,authpriv.*			/var/log/auth.log
+*.*;auth,authpriv.none		-/var/log/syslog
+#cron.*				/var/log/cron.log
+#daemon.*			-/var/log/daemon.log
+kern.*				-/var/log/kern.log
+#lpr.*				-/var/log/lpr.log
+mail.*				-/var/log/mail.log
+#user.*				-/var/log/user.log
+
+#
+# Logging for the mail system.  Split it up so that
+# it is easy to write scripts to parse these files.
+#
+#mail.info			-/var/log/mail.info
+#mail.warn			-/var/log/mail.warn
+mail.err			/var/log/mail.err
+
+#
+# Logging for INN news system.
+#
+news.crit			/var/log/news/news.crit
+news.err			/var/log/news/news.err
+news.notice			-/var/log/news/news.notice
+
+#
+# Some "catch-all" log files.
+#
+#*.=debug;\
+#	auth,authpriv.none;\
+#	news.none;mail.none	-/var/log/debug
+#*.=info;*.=notice;*.=warn;\
+#	auth,authpriv.none;\
+#	cron,daemon.none;\
+#	mail,news.none		-/var/log/messages
+
+#
+# Emergencies are sent to everybody logged in.
+#
+*.emerg                                :omusrmsg:*
+
+#
+# I like to have messages displayed on the console, but only on a virtual
+# console I usually leave idle.
+#
+#daemon,mail.*;\
+#	news.=crit;news.=err;news.=notice;\
+#	*.=debug;*.=info;\
+#	*.=notice;*.=warn	/dev/tty8
+
+# The named pipe /dev/xconsole is for the `xconsole' utility.  To use it,
+# you must invoke `xconsole' with the `-file' option:
+#
+#    $ xconsole -file /dev/xconsole [...]
+#
+# NOTE: adjust the list below, or you'll go crazy if you have a reasonably
+#      busy site..
+#
+#daemon.*;mail.*;\
+#	news.err;\
+#	*.=debug;*.=info;\
+#	*.=notice;*.=warn	|/dev/xconsole

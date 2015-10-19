@@ -1,12 +1,11 @@
-#  /etc/rsyslog.conf	Configuration file for rsyslog.
 # {{ ansible_managed }}
+#  /etc/rsyslog.conf	Configuration file for rsyslog.
 #
 #			For more information see
 #			/usr/share/doc/rsyslog-doc/html/rsyslog_conf.html
 #
 #  Default logging rules can be found in /etc/rsyslog.d/50-default.conf
 
-$PreserveFQDN on
 
 #################
 #### MODULES ####
@@ -23,8 +22,6 @@ $ModLoad imklog   # provides kernel logging support
 # provides TCP syslog reception
 #$ModLoad imtcp
 #$InputTCPServerRun 514
-
-$ModLoad omrelp   # Load the output module ('om') 'relp'
 
 {% if is_rsyslog_server is defined %}
 $ModLoad imrelp   # Load the input module ('im') 'relp'
@@ -71,11 +68,5 @@ $IncludeConfig /etc/rsyslog.d/*.conf
 #$template DynamicFile, "/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
 #:fromhost-ip, !isequal, "127.0.0.1" ?DynamicFile
 #:fromhost-ip, !isequal, "127.0.0.1" stop
-$template FILENAME,"/var/log/%fromhost-ip%/syslog.log"
+$template FILENAME,"/var/log/%HOSTNAME%/syslog.log"
 *.* ?FILENAME
-
-{% if is_rsyslog_server is not defined %}
-{% for host in groups['rsyslog-server'] %}
-*.* @@{{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}:{{rsyslog_incoming_port}}
-{% endfor %}
-{% endif %}
