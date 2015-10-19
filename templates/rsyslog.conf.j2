@@ -28,7 +28,7 @@ $ModLoad omrelp   # Load the output module ('om') 'relp'
 
 {% if is_rsyslog_server is defined %}
 $ModLoad imrelp   # Load the input module ('im') 'relp'
-$InputRELPServerRun 20514
+$InputRELPServerRun {{rsyslog_incoming_port}}
 {% endif %}
 
 # Enable non-kernel facility klog messages
@@ -76,6 +76,6 @@ $template FILENAME,"/var/log/%fromhost-ip%/syslog.log"
 
 {% if is_rsyslog_server is not defined %}
 {% for host in groups['rsyslog-server'] %}
-*.* @@{{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}
+*.* @@{{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}:{{rsyslog_incoming_port}}
 {% endfor %}
 {% endif %}
