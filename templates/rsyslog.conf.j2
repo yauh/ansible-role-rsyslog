@@ -68,6 +68,14 @@ $WorkDirectory /var/spool/rsyslog
 #
 $IncludeConfig /etc/rsyslog.d/*.conf
 
-$template DynamicFile, "/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
-:fromhost-ip, !isequal, "127.0.0.1" ?DynamicFile
-:fromhost-ip, !isequal, "127.0.0.1" stop
+#$template DynamicFile, "/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
+#:fromhost-ip, !isequal, "127.0.0.1" ?DynamicFile
+#:fromhost-ip, !isequal, "127.0.0.1" stop
+$template FILENAME,"/var/log/%fromhost-ip%/syslog.log"
+*.* ?FILENAME
+
+{% if is_rsyslog_server is not defined %}
+{% for host in groups['rsyslog-server'] %}
+*.* @@{{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}
+{% endfor %}
+{% endif %}
