@@ -1,0 +1,8 @@
+$InputFileName  /app/your-file.log 
+$InputFileTag   your-tag
+$InputFileStateFile     your-tag
+$InputFileSeverity      info
+$InputFileFacility      local7
+$InputRunFileMonitor
+$InputFilePersistStateInterval 1000
+local7.*  @@remote-rsyslog-server:port
