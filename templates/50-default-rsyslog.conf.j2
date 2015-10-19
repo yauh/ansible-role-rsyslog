@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 module(load="imuxsock")             # for listening to /dev/log
-module(load="omelasticsearch") # for outputting to Elasticsearch
+#module(load="omelasticsearch") # for outputting to Elasticsearch
 # this is for index names to be like: logstash-YYYY.MM.DD
 template(name="logstash-index"
   type="list") {
@@ -25,7 +25,7 @@ template(name="plain-syslog"
     constant(value="\"}")
 }
 # this is where we actually send the logs to Elasticsearch (localhost:9200 by default)
-action(type="omelasticsearch"
-    template="plain-syslog"
-    searchIndex="logstash-index"
-    dynSearchIndex="on")
+#action(type="omelasticsearch"
+#    template="plain-syslog"
+#    searchIndex="logstash-index"
+#    dynSearchIndex="on")
