@@ -1,1 +1,4 @@
+# {{ ansible_managed }}
+{% for host in groups['rsyslog-server'] %}
 *.* :omrelp:{{ hostvars[host]['ansible_eth1']['ipv4']['address'] }}:{{rsyslog_incoming_port}}
+{% endfor %}
