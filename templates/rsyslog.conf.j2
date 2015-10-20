@@ -25,6 +25,8 @@ $ModLoad imklog   # provides kernel logging support
 
 $ModLoad imfile
 
+$ModLoad omrelp
+
 {% if is_rsyslog_server is defined %}
 $ModLoad imrelp   # Load the input module ('im') 'relp'
 $InputRELPServerRun {{rsyslog_incoming_port}}
