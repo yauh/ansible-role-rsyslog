@@ -26,6 +26,9 @@ Including an example of how to use your role (for instance, with variables passe
      - { role: yauh.rsyslog }
 ```
 
+## TODO
+[http://www.rsyslog.com/using-tls-with-relp/](http://www.rsyslog.com/using-tls-with-relp/) [http://www.rsyslog.com/tls-secured-syslog-via-relp/](http://www.rsyslog.com/tls-secured-syslog-via-relp/)
+
 ## License
 BSD
 

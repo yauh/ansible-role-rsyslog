@@ -1,0 +1,2 @@
+- name: Add certs
+  shell: echo 'do it'

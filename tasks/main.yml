@@ -6,6 +6,7 @@
       - rsyslog
       - librelp-dev
       - rsyslog-relp
+      - gnutls-bin
 
 - name: Create rsyslog.conf configuration file
   template: >
@@ -46,6 +47,11 @@
     regexp='^RSYSLOGD_OPTIONS='
     line='RSYSLOGD_OPTIONS={{ rsyslog_options }}'
   notify: restart rsyslog
+
+# TODO: Add tls support
+- include: tls.yml
+  when: rsyslog_tls == 'true'
+
 
 - name: Ensure rsyslog service is started and enabled on boot
   service: name=rsyslog state=started enabled=yes
