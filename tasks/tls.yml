@@ -1,2 +1,28 @@
-- name: Add certs
-  shell: echo 'do it'
+- name: Ensure /etc/crt exists
+  file: path=/etc/crt state=directory mode=0644
+
+
+
+- name: Create ca.pem
+  copy:
+    dest: /etc/crt/ca.pem
+    content: "{{ rsyslog_tls_ca }}"
+    owner: "root"
+    group: "root"
+    mode: 0600
+
+- name: Create cert.pem
+  copy:
+    dest: /etc/crt/cert.pem
+    content: "{{ rsyslog_tls_cert }}"
+    owner: "root"
+    group: "root"
+    mode: 0600
+
+- name: Create key.pem
+  copy:
+    dest: /etc/crt/key.pem
+    content: "{{ rsyslog_tls_key }}"
+    owner: "root"
+    group: "root"
+    mode: 0600

@@ -50,8 +50,7 @@
 
 # TODO: Add tls support
 - include: tls.yml
-  when: rsyslog_tls == 'true'
-
+  when: rsyslog_tls is defined
 
 - name: Ensure rsyslog service is started and enabled on boot
   service: name=rsyslog state=started enabled=yes
